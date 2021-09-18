@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
+import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 import 'package:weather_app/src/configs/constants.dart';
 import 'package:weather_app/src/configs/size_config.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -60,50 +62,65 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 2),
             )),
             SliverFixedExtentList(
-              itemExtent: SizeConfig.blockSizeVertical! * 7,
+              itemExtent: SizeConfig.blockSizeVertical! * 10,
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  if(index.isOdd){
-                    return const Material(child: Divider(color: Colors.grey,),);
-                  }
                   return Material(
-                      child: ListTile(
-                    selectedTileColor: Colors.grey,
-                    onTap: () => Navigator.pushNamed(
-                        context, RouteName.WEATHER_DETAILS_SCREEN),
-                    leading: const Text(
-                      "Bien Hoa",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                    trailing: SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 35,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            WeatherIcons.day_sunny_overcast,
-                            size: 22,
+                      child: Container(
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom:
+                                BorderSide(color: Colors.grey, width: 0.2))),
+                    child: Stack(
+                      children: [
+                        WeatherBg(
+                          weatherType: WeatherType.sunny,
+                          width: SizeConfig.blockSizeHorizontal! * 100,
+                          height: SizeConfig.blockSizeVertical! * 10,
+                        ),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal! * 100,
+                          height: SizeConfig.blockSizeVertical! * 10,
+                          color: Colors.black87.withOpacity(0.2),
+                          child: ListTile(
+                            onTap: () => Navigator.pushNamed(
+                                context, RouteName.WEATHER_DETAILS_SCREEN),
+                            leading: const Text(
+                              "Bien Hoa",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+                            ),
+                            trailing: SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 35,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    WeatherIcons.day_sunny_overcast,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                  Text(
+                                    '25' '\u2103',
+                                    style: TextStyle(fontSize: 20, color: Colors.white,),
+                                  ),
+                                  Icon(CupertinoIcons.forward, color: Colors.white,)
+                                ],
+                              ),
+                            ),
                           ),
-                          Text(
-                            '25' '\u2103',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Icon(CupertinoIcons.forward)
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ));
                 },
-                childCount: 20,
+                childCount: 10,
               ),
             )
           ],
         ));
   }
 
-  void openAddCity() async{
-    
-  }
+  void openAddCity() async {}
 }

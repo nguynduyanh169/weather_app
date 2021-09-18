@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
+import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 import 'package:weather_app/src/configs/constants.dart';
 import 'package:weather_app/src/configs/size_config.dart';
+import 'package:weather_app/src/widgets/weather_week.dart';
 import 'package:weather_icons/weather_icons.dart';
 
 class WeatherDetailsScreen extends StatelessWidget {
@@ -16,22 +19,10 @@ class WeatherDetailsScreen extends StatelessWidget {
         backgroundColor: AppColor.BACKGROUND,
         child: CustomScrollView(
           slivers: <Widget>[
-            CupertinoSliverNavigationBar(
+            const CupertinoSliverNavigationBar(
               automaticallyImplyLeading: true,
               previousPageTitle: 'Home',
-              largeTitle: const Text('Bien Hoa'),
-              trailing: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  child: const Icon(
-                    CupertinoIcons.add_circled_solid,
-                    size: 25,
-                  ),
-                  onTap: () {
-                    print('ok');
-                  },
-                ),
-              ),
+              largeTitle: Text('Bien Hoa'),
             ),
             SliverToBoxAdapter(
                 child: Padding(
@@ -46,24 +37,50 @@ class WeatherDetailsScreen extends StatelessWidget {
               color: const Color.fromRGBO(250, 250, 250, 10),
               width: SizeConfig.blockSizeHorizontal! * 100,
               height: SizeConfig.blockSizeVertical! * 18,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Stack(
                 children: [
-                  const Icon(
-                    WeatherIcons.day_sunny_overcast,
-                    size: 30,
+                  WeatherBg(
+                    weatherType: WeatherType.sunny,
+                    width: SizeConfig.blockSizeHorizontal! * 100,
+                    height: SizeConfig.blockSizeVertical! * 18,
                   ),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal! * 5,
-                  ),
-                  const Text(
-                    '25' '\u2103',
-                    style: TextStyle(fontSize: 30),
+                  Container(
+                    color: Colors.black87.withOpacity(0.2),
+                    padding:
+                        EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 2),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              WeatherIcons.day_sunny_overcast,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 5,
+                            ),
+                            const Text(
+                              '25' '\u2103',
+                              style: TextStyle(fontSize: 30, color: Colors.white,),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical! * 2,
+                        ),
+                        const Text(
+                          'Sunny',
+                          style: TextStyle(fontSize: 22, color: Colors.white,),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              padding: EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 2),
             )),
             SliverToBoxAdapter(
                 child: Padding(
@@ -95,7 +112,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -114,7 +132,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -133,7 +152,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -152,7 +172,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -171,12 +192,12 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
-                    )
-                    ,
+                    ),
                     Container(
                       padding: EdgeInsets.only(
                           left: SizeConfig.blockSizeHorizontal! * 2,
@@ -191,7 +212,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -210,7 +232,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.day_sunny),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -229,7 +252,8 @@ class WeatherDetailsScreen extends StatelessWidget {
                           Icon(WeatherIcons.cloudy),
                           Text(
                             '25' '\u2103',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
                           )
                         ],
                       ),
@@ -247,46 +271,12 @@ class WeatherDetailsScreen extends StatelessWidget {
               padding: EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 2),
             )),
             SliverFixedExtentList(
-              itemExtent: SizeConfig.blockSizeVertical! * 7,
+              itemExtent: SizeConfig.blockSizeVertical! * 8,
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  if (index.isOdd) {
-                    return const Material(
-                      child: Divider(
-                        color: Colors.grey,
-                      ),
-                    );
-                  }
-                  return Material(
-                      child: ListTile(
-                    selectedTileColor: Colors.grey,
-                    onTap: () => print('ok'),
-                    leading: const Text(
-                      "Bien Hoa",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                    trailing: SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 35,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            WeatherIcons.day_sunny_overcast,
-                            size: 22,
-                          ),
-                          Text(
-                            '25' '\u2103',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Icon(CupertinoIcons.forward)
-                        ],
-                      ),
-                    ),
-                  ));
+                  return const Material(child: WeatherWeek());
                 },
-                childCount: 20,
+                childCount: 5,
               ),
             )
           ],
