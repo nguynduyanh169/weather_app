@@ -7,7 +7,7 @@ class AddCityScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('Home Screen'),),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Add City Screen'),),
       child: Container()
       );
   }
