@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
 import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:weather_app/src/configs/constants.dart';
 import 'package:weather_app/src/configs/size_config.dart';
+import 'package:weather_app/src/screens/add_city_screen.dart';
 import 'package:weather_icons/weather_icons.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,18 +27,21 @@ class _HomeScreenState extends State<HomeScreen> {
             CupertinoSliverNavigationBar(
               leading: Material(
                 color: Colors.transparent,
-                child: TextButton(
-                    style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.blue)),
-                    onPressed: () {
+                child: GestureDetector(
+                    onTap: () {
                       print('edit');
                     },
-                    child: const Text(
-                      "Edit",
-                      textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.blockSizeVertical! * 1.5),
+                      child: const Text(
+                        "Edit",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            color: Colors.blue),
+                      ),
                     )),
               ),
               largeTitle: const Text('Weather'),
@@ -48,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 25,
                   ),
                   onTap: () {
-                    print('ok');
+                    openAddCity();
                   },
                 ),
               ),
@@ -88,12 +93,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             leading: const Text(
                               "Bien Hoa",
                               style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                             trailing: SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 35,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: const [
                                   Icon(
@@ -103,9 +111,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   Text(
                                     '25' '\u2103',
-                                    style: TextStyle(fontSize: 20, color: Colors.white,),
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                  Icon(CupertinoIcons.forward, color: Colors.white,)
+                                  Icon(
+                                    CupertinoIcons.forward,
+                                    color: Colors.white,
+                                  )
                                 ],
                               ),
                             ),
@@ -122,5 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  void openAddCity() async {}
+  void openAddCity() async {
+    await showCupertinoModalBottomSheet(
+        context: context, builder: (context) => AddCityScreen());
+  }
 }
