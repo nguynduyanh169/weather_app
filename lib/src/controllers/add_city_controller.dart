@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:weather_app/src/models/city_model.dart';
@@ -53,12 +55,31 @@ class AddCityController extends GetxController {
     }
   }
 
+  Future<void> showErrorDialog(
+      String errorMessage, BuildContext context) async {
+     await showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+              title: const Text("Error"),
+              content: Text(errorMessage),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('Dismiss'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
+  }
+
   void saveCityToLocal(Datum city) {
     addCityStatus.value = AddCityStatus.saving;
     try {
       CityLocal cityLocal = CityLocal(
           id: city.id,
           name: city.name,
+          city: city.city,
           wikiDataId: city.wikiDataId,
           type: city.type,
           country: city.country,

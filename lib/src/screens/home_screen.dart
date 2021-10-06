@@ -2,21 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
+import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:weather_app/src/configs/constants.dart';
 import 'package:weather_app/src/configs/size_config.dart';
+import 'package:weather_app/src/controllers/home_controller.dart';
 import 'package:weather_app/src/screens/add_city_screen.dart';
-import 'package:weather_icons/weather_icons.dart';
+import 'package:weather_app/src/screens/weather_details_screen.dart';
+import 'package:weather_app/src/utils/weather_utils.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+  HomeController homeController = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -53,10 +50,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 25,
                   ),
                   onTap: () {
-                    openAddCity();
+                    openAddCity(context);
                   },
                 ),
               ),
+            ),
+            CupertinoSliverRefreshControl(
+              onRefresh: () async {
+                homeController.refreshFetchData();
+                homeController.fetchDataToHome();
+              },
             ),
             SliverToBoxAdapter(
                 child: Padding(
@@ -66,78 +69,137 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               padding: EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 2),
             )),
-            SliverFixedExtentList(
-              itemExtent: SizeConfig.blockSizeVertical! * 10,
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Material(
-                      child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(color: Colors.grey, width: 0.2))),
-                    child: Stack(
-                      children: [
-                        WeatherBg(
-                          weatherType: WeatherType.sunny,
-                          width: SizeConfig.blockSizeHorizontal! * 100,
-                          height: SizeConfig.blockSizeVertical! * 10,
-                        ),
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal! * 100,
-                          height: SizeConfig.blockSizeVertical! * 10,
-                          color: Colors.black87.withOpacity(0.2),
-                          child: ListTile(
-                            onTap: () => Navigator.pushNamed(
-                                context, RouteName.WEATHER_DETAILS_SCREEN),
-                            leading: const Text(
-                              "Bien Hoa",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                            trailing: SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 35,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    WeatherIcons.day_sunny_overcast,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ),
-                                  Text(
-                                    '25' '\u2103',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.forward,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ));
-                },
-                childCount: 10,
-              ),
-            )
+            GetBuilder<HomeController>(builder: (controller) {
+              return Obx(() {
+                if (controller.homeStatus.value == HomeStatus.loading) {
+                  return loading();
+                } else {
+                  return cityList(controller);
+                }
+              });
+            })
           ],
         ));
   }
 
-  void openAddCity() async {
+  SliverFixedExtentList cityList(HomeController controller) {
+    return SliverFixedExtentList(
+      itemExtent: SizeConfig.blockSizeVertical! * 10,
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return Material(
+              child: Container(
+            decoration: const BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(color: Colors.grey, width: 0.2))),
+            child: Stack(
+              children: [
+                WeatherBg(
+                  weatherType: WeatherUtils.getWeatherBgType(controller
+                      .results[index].weatherModel!.weather.first.icon),
+                  width: SizeConfig.blockSizeHorizontal! * 100,
+                  height: SizeConfig.blockSizeVertical! * 10,
+                ),
+                Dismissible(
+                  onDismissed: (direction) {
+                    homeController.deleteCity(
+                        controller.results[index].cityLocal!.id!, index);
+                  },
+                  background: Container(
+                    color: Colors.redAccent,
+                    padding: EdgeInsets.only(
+                        left: SizeConfig.blockSizeHorizontal! * 2,
+                        right: SizeConfig.blockSizeHorizontal! * 2),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          CupertinoIcons.delete,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                  key: Key(controller.results[index].cityLocal!.id!.toString()),
+                  child: Container(
+                    width: SizeConfig.blockSizeHorizontal! * 100,
+                    height: SizeConfig.blockSizeVertical! * 10,
+                    color: Colors.black87.withOpacity(0.2),
+                    child: ListTile(
+                      onTap: () => Navigator.pushNamed(
+                          context, RouteName.WEATHER_DETAILS_SCREEN,
+                          arguments: WeatherDetailsScreenArgs(
+                              lat: controller
+                                  .results[index].weatherModel!.coord.lat,
+                              lon: controller
+                                  .results[index].weatherModel!.coord.lon,
+                              cityName:
+                                  controller.results[index].cityLocal!.name!)),
+                      leading: Text(
+                        controller.results[index].cityLocal!.name!,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
+                      trailing: SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 35,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Image(
+                            //     image: NetworkImage(
+                            //         "http://openweathermap.org/img/w/01d.png")),
+                            Icon(
+                              WeatherUtils.getIconData(controller.results[index]
+                                  .weatherModel!.weather.first.icon),
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              controller.results[index].weatherModel!.main.temp
+                                      .toStringAsFixed(0) +
+                                  '\u2103',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Icon(
+                              CupertinoIcons.forward,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ));
+        },
+        childCount: controller.results.length,
+      ),
+    );
+  }
+
+  SliverFillRemaining loading() {
+    return const SliverFillRemaining(
+      child: SizedBox(
+        child: Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      ),
+    );
+  }
+
+  void openAddCity(BuildContext context) async {
     await showCupertinoModalBottomSheet(
-        context: context, builder: (context) => AddCityScreen());
+        context: context,
+        builder: (context) => AddCityScreen()).whenComplete(() {
+      homeController.refreshFetchData();
+      homeController.fetchDataToHome();
+    });
   }
 }

@@ -19,7 +19,6 @@ class CityNetwork {
         "offset": offset,
         "namePrefix": name
       };
-      print(params);
       Response response = await _dio.get(ApiUrl.GET_CITY_BY_NAME,
           options: Options(headers: headers), queryParameters: params);
       if (response.statusCode == 200) {
